@@ -1,0 +1,725 @@
+#!/bin/bash
+
+######################################################
+## This is a Calculator script which runs as normal calculator with a Textbased User Interface (TUI)
+## This script was done by:
+##	- Mohamed Ali Hassan
+##	- Mohamed Ahmed Mkawy
+## 	- Abdullah Salaheldin
+##	- 
+#####################################################
+
+#Selecting Colors for the style
+export NEWT_COLORS='
+root=black,gray
+title=white,black
+window=white,black
+border=white,black
+shadow=black,gray
+listbox=white,black
+actsellistbox=black,white
+actlistbox=white,gray
+textbox=white,black
+button=white,gray
+compactbutton=white,black
+checkbox=white,black
+actcheckbox=lightgray,gray
+#acttextbox=white,black
+#actbutton=black,black
+#label=white,black
+#textbox=black,black
+#acttextbox=black,black
+#disentry=gray,lightgray
+'
+########## Main Page Section  ######
+
+_MAIN (){
+
+page1_op=$(
+whiptail --title "Calculator" --menu "" 25 50 3 --cancel-button "Exit" --ok-button "Enter" --notags\
+        "1)" "Start The Calculator"\
+        "2)" "Documentation"\
+        "3)" "Team Members" 3>&1 1>&2 2>&3
+)
+EX=$?
+if [ $EX = 1 ]
+then
+        exit
+fi
+
+case $page1_op in
+        "1)")
+                _CALC
+                ;;
+        "2)")
+		_DOC
+                ;;
+        "3)")
+		_TEAM
+                ;;
+esac
+}
+########################################
+###### Documentation Page Section ######
+########################################
+_DOC () {
+whiptail --title "Documentation" --msgbox \
+'
+This project is a calculator done by using bash scripting language
+The Main Page contains:
+1-Documntation: description of the project and its features
+2-Team members: name of the team members who did this project
+3-The Calculator which contains:
+   1.Standerd: is for the normal arthmetic operations which contatins:
+	1-Clear: clears the currently displayed value on the screen
+	2-Add(+): adds the entered number to the currently displayed value on the screen
+	3-Sub(-): subtracts the entered number from the currently displayed value
+	4-Multiply(*): multiplys the currently displayed value with the entered number 
+	5-Division(/): divisions the currently displayed value by the entered number 
+	6-Modulus(%): displays the remainder of divisioning the currently displayed value by the entered number 
+	7-Power(^): displays the currently displayed number to the power of the entered number
+	8-Factorial(!): displays the factorial of the currently displayed number
+	9- -/+: converts the number currently displayed from negative to positive and vice versa
+   2.Programmer: is for the higher level operations which contains:
+	1-Clear: clears the currently displayed value on the screen
+	2-Enter: takes number of any type(Hexadecimal,Decimal,Octal,Binary) and convert it to the other 3 types 
+	3-And: takes number of any type(Hexadecimal,Decimal,Octal,Binary) then AND it with the currently displayed values
+	4-OR: takes number of any type(Hexadecimal,Decimal,Octal,Binary) then OR it with the currently displayed values
+	5-NOT: display the NOT of the currently displayed values
+	6-NAND: takes number of any type(Hexadecimal,Decimal,Octal,Binary) then NAND it with the currently displayed value
+	7-NOR: takes number of any type(Hexadecimal,Decimal,Octal,Binary) then NOR it with the currently displayed value
+	8-XOR: takes number of any type(Hexadecimal,Decimal,Octal,Binary) then XOR it with the currently displayed value
+	9-Shift Right(>>): shift the currently displayed number by the entered number
+	10-Shift Left(<<): shift the currently displayed number by the entered number
+' 25 130 --scrolltext --ok-button "back"
+EX=$?
+if [ $EX = 0 ]
+then
+        _MAIN
+fi
+}
+
+########################################
+###### Team Members Page Section ######
+########################################
+_TEAM () {
+whiptail --title "Team Members" --msgbox \
+'
+	- Mohamed Ali Hassan
+	- Mohamed Ahmed Mkawy
+	- Abdullah Salaheldien Mohamed
+	- Esraa Salah Sakr
+' 25 50 --ok-button "back"
+EX=$?
+if [ $EX = 0 ]
+then
+        _MAIN
+fi
+}
+
+#######################################
+####### Calculator Page Section #######
+#######################################
+_CALC (){
+
+page1_op=$(
+whiptail --title "Calculator" --menu "" 25 50 3 --cancel-button "back" --ok-button "Enter"\
+        "1)" "Standerd"\
+        "2)" "Programmer" 3>&1 1>&2 2>&3
+)
+EX=$?
+if [ $EX = 1 ]
+then
+        _MAIN
+fi
+
+case $page1_op in
+        "1)")
+                _STANDER "0" ""
+                ;;
+        "2)")
+		_PROGRAMMER "0" ""
+                ;;
+esac
+}
+
+##################################
+###### Stander Page Section ######
+##################################
+_STANDER () {
+
+CURRENT_NUMBER=$1
+LINE=$2
+
+STAND_OP=$(
+whiptail --title "Stander Operations"  --menu " $LINE \n Result ==> $CURRENT_NUMBER " 25 50 9 --cancel-button "back" --ok-button "Enter"\
+        "1)" "Clear"\
+        "2)" "Add"\
+        "3)" "Sub"\
+        "4)" "Multiply"\
+        "5)" "Division"\
+        "6)" "Modulus"\
+        "7)" "Power"\
+        "8)" "Factorial"\
+        "9)" ' -/+' 3>&2 2>&1 1>&3
+)
+EX=$?
+if [ $EX = 1 ]
+then
+        _CALC
+fi
+case $STAND_OP in
+        "1)")
+                _CLEAR_STANDER
+
+                ;;
+        "2)")
+                _ADD
+                ;;
+        "3)")
+                _SUB
+                ;;
+        "4)")
+                _MULTIPLY
+                ;;
+        "5)")
+                _DIV
+                ;;
+        "6)")
+                _MOD
+                ;;
+        "7)")
+                _POWER
+                ;;
+        "8)")
+                _FACTORIAL
+                ;;
+        "9)")
+                _NP
+                ;;
+esac
+}
+
+
+_CLEAR_STANDER (){
+        _STANDER "0" ""
+}
+
+
+_ADD (){
+        INPUT_NUMBER=$(whiptail --title "Add" --inputbox "Enter number" 25 50 "" --ok-button "Enter"\
+                --cancel-button "back"  3>&1 1>&2 2>&3)
+        EX=$?
+        if [ $EX = 1 ]
+        then
+                _STANDER $CURRENT_NUMBER "$LINE"
+        else
+                #Checking if the entered value is number
+                if [[ $INPUT_NUMBER =~ ^[-0-9][0-9]*$ ]]
+                then
+                        NEW_NUMBER=$(($CURRENT_NUMBER + $INPUT_NUMBER))
+                        _STANDER $NEW_NUMBER "$CURRENT_NUMBER + $INPUT_NUMBER"
+                else
+                        whiptail --title "!ERROR!" --msgbox "Entered Value Must be a Positive Digite Number" 10 50
+                        _ADD
+                fi
+        fi
+}
+
+
+_SUB (){
+        INPUT_NUMBER=$(whiptail --title "Sub" --inputbox "Enter number" 25 50 "" --ok-button "Enter"\
+                --cancel-button "back"  3>&1 1>&2 2>&3)
+        EX=$?
+        if  [ $EX = 1 ]
+        then
+                _STANDER $CURRENT_NUMBER "$LINE"
+        else
+                #Checking if the entered value is number
+                if [[ $INPUT_NUMBER =~ ^[-0-9][0-9]*$ ]]
+                then
+                        NEW_NUMBER=$(($CURRENT_NUMBER - $INPUT_NUMBER))
+                        _STANDER $NEW_NUMBER "$CURRENT_NUMBER - $INPUT_NUMBER "
+                else
+                        whiptail --title "!ERROR!" --msgbox "The Entered Value Must be a Digit Number" 5 50
+                        _SUB
+                fi
+        fi
+}
+
+
+_MULTIPLY (){
+        INPUT_NUMBER=$(whiptail --title "Multiply" --inputbox "Enter number" 25 50 "" --ok-button "Enter"\
+                --cancel-button "back"  3>&1 1>&2 2>&3)
+        EX=$?
+        if  [ $EX = 1 ]
+        then
+                _STANDER $CURRENT_NUMBER "$LINE"
+        else
+                #Checking if the entered value is number
+                if [[ $INPUT_NUMBER =~ ^[-0-9][0-9]*$ ]]
+                then
+                        NEW_NUMBER=$(($CURRENT_NUMBER * $INPUT_NUMBER))
+                        _STANDER $NEW_NUMBER "$CURRENT_NUMBER * $INPUT_NUMBER "
+                else
+                        whiptail --title "!ERROR!" --msgbox "The Entered Value Must be a Digit Number" 5 50
+                        _MULTIPLY
+                fi
+        fi
+}
+
+
+_DIV (){
+        INPUT_NUMBER=$(whiptail --title "Division" --inputbox "Enter number" 25 50 "" --ok-button "Enter"\
+                --cancel-button "back"  3>&1 1>&2 2>&3)
+        EX=$?
+        if [ $EX = 1 ]
+        then
+                _STANDER $CURRENT_NUMBER "$LINE"
+        else
+                #Checking if the entered value is number
+                if [[ $INPUT_NUMBER =~ ^[-1-9][1-9]*$ ]]
+                then
+                        NEW_NUMBER=$(($CURRENT_NUMBER / $INPUT_NUMBER))
+                        _STANDER $NEW_NUMBER "$CURRENT_NUMBER / $INPUT_NUMBER "
+                else
+                        whiptail --title "!ERROR!" --msgbox "The Entered Value Must be a Digite Number" 5 50
+                        _DIV
+                fi
+        fi
+}
+
+_MOD (){
+        INPUT_NUMBER=$(whiptail --title "Modules" --inputbox "Enter number" 25 50 "" --ok-button "Enter"\
+                --cancel-button "back"  3>&1 1>&2 2>&3)
+        EX=$?
+        if [ $EX = 1 ]
+        then
+                _STANDER $CURRENT_NUMBER "$LINE"
+        else
+                #Checking if the entered value is number
+                if [[ $INPUT_NUMBER =~ ^[-1-9][1-9]*$ ]]
+                then
+                        NEW_NUMBER=$(($CURRENT_NUMBER % $INPUT_NUMBER))
+                       _STANDER $NEW_NUMBER "$CURRENT_NUMBER % $INPUT_NUMBER "
+                else
+                        whiptail --title "!ERROR!" --msgbox "The Entered Value Must be a Digite Number" 5 50
+                        _MOD
+                fi
+        fi
+
+}
+
+
+_POWER (){
+
+        if [[ $CURRENT_NUMBER =~ ^- ]]
+        then
+                whiptail --title "!ERROR!" --msgbox "Current Value Must be a Positive" 10 50
+                _STANDER $CURRENT_NUMBER "$LINE"
+        fi
+
+        INPUT_NUMBER=$(whiptail --title "Power" --inputbox "Enter number" 25 50 "" --ok-button "Enter"\
+                --cancel-button "back"  3>&1 1>&2 2>&3)
+        EX=$?
+        if [ $EX = 1 ]
+        then
+                _STANDER $CURRENT_NUMBER "$LINE"
+        else
+                #Checking if the entered value is number
+                if [[ $INPUT_NUMBER =~ ^[-0-9][0-9]*$ ]]
+                then
+                        NEW_NUMBER=$(($CURRENT_NUMBER ** $INPUT_NUMBER))
+                        _STANDER $NEW_NUMBER "$CURRENT_NUMBER ^ $INPUT_NUMBER"
+                else
+                        whiptail --title "!ERROR!" --msgbox "The Entered Value Must be a Digite Number" 10 50
+                        _POWER
+                fi
+        fi
+}
+
+
+_FACTORIAL (){
+        COUNT=$CURRENT_NUMBER
+        NEW_NUMBER=1
+        while [ "$COUNT" -gt  "0" ]
+        do
+                NEW_NUMBER=$(($NEW_NUMBER * $COUNT))
+                COUNT=$(($COUNT - 1))
+        done
+        _STANDER $NEW_NUMBER "Fact($CURRENT_NUMBER)"
+}
+
+
+_NP (){
+        NEW_NUMBER=$((CURRENT_NUMBER * -1 ))
+        _STANDER $NEW_NUMBER "$CURRENT_NUMBER -/+"
+}
+
+#####################################
+###### Programmer Page Section ######
+#####################################
+_PROGRAMMER () {
+
+D2H=({{0..9},{A,B,C,D,E,F}}{{0..9},{A,B,C,D,E,F}})
+D2O=({0..7}{0..7}{0..7})
+D2B=({0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1}{0..1})
+
+CURRENT_DEC=$1
+CURRENT_HEX=${D2H[$CURRENT_DEC]}
+CURRENT_OCT=${D2O[$CURRENT_DEC]}
+CURRENT_BIN=${D2B[$CURRENT_DEC]}
+
+LINE2=$2
+
+
+PROGRAMMER_OP=$(
+whiptail --title "Programmer Operations"  --menu "$LINE2\nHEX ==> $CURRENT_HEX\nDEC ==> $CURRENT_DEC\nOCT ==> $CURRENT_OCT\nBIN ==> $CURRENT_BIN" \
+		25 50 10 --cancel-button "back" --ok-button "Enter"\
+        "1)" "Clear"\
+	"2)" "Enter"\
+        "3)" "AND"\
+        "4)" "OR"\
+        "5)" "NOT"\
+        "6)" "NAND"\
+        "7)" "NOR"\
+        "8)" "XOR"\
+        "9)" "Shift Right [>>]"\
+        "10)" "Shift Left [<<]" 3>&2 2>&1 1>&3
+)
+EX=$?
+if [ $EX = 1 ]
+then
+        _CALC
+fi
+case $PROGRAMMER_OP in
+        "1)")
+		_CLEAR_PROGRAMMER
+                ;;
+        "2)")
+		_ENTER "1"
+                ;;
+        "3)")
+		_AND
+                ;;
+        "4)")
+		_OR
+                ;;
+        "5)")
+		_NOT
+                ;;
+        "6)")
+		_NAND
+                ;;
+        "7)")
+		_NOR
+                ;;
+        "8)")
+		_XOR 
+                ;;
+        "9)")
+		_SHIFT_RIGHT
+                ;;
+        "10)")
+		_SHIFT_LEFT
+                ;;
+esac
+}
+_CLEAR_PROGRAMMER (){
+        _PROGRAMMER "0"
+}
+
+#####################################
+###### Enter Type Page Section ######
+#####################################
+_ENTER (){
+OPTION=$1
+ENTER_OP=$(
+whiptail --title "Input Type"  --radiolist "Select Type of Input" 25 50 10 --cancel-button "back" --ok-button "Enter"\
+        "1)" "HEX" ON\
+	"2)" "DEC" OFF\
+        "3)" "OCT" OFF\
+        "4)" "BIN" OFF 3>&1 1>&2 2>&3
+)
+EX=$?
+if [ $EX = 1 ]
+then
+        _PROGRAMMER $CURRENT_DEC
+fi
+case $ENTER_OP in
+        "1)")
+		_HEX
+                ;;
+        "2)")
+        	_DEC
+                ;;
+        "3)")
+        	_OCT
+                ;;
+        "4)")
+		_BIN
+                ;;
+esac
+
+if [ $OPTION = "1" ]
+then
+	_PROGRAMMER "$NEW_DEC" ""
+fi
+
+}
+
+
+_HEX (){
+        INPUT_NUMBER=$(whiptail --title "Hexdecimal" --inputbox "Enter HEX number: (limit is FF)" 25 50 ""\
+                --cancel-button "back" --ok-button "Enter"  3>&1 1>&2 2>&3)
+        EX=$?
+        if [ $EX = 1 ]
+        then
+                _ENTER
+        else
+                #Checking if the entered value is Hexdecimal number
+                if [[ $INPUT_NUMBER =~ ^[0-9A-Fa-f]{1,2}$ ]] 
+                then
+			TYPE="HEX"
+                        NEW_DEC=$((16#$INPUT_NUMBER))
+                else
+                        whiptail --title "!ERROR!" --msgbox "The Entered Value Must Hexdecimal Within Limit" 10 50
+                        _HEX
+                fi
+        fi
+}
+
+_DEC (){
+        INPUT_NUMBER=$(whiptail --title "Decimal" --inputbox "Enter DEC number: (limit is 255)" 25 50 ""\
+                --cancel-button "back" --ok-button "Enter" 3>&1 1>&2 2>&3)
+        EX=$?
+        if [ $EX = 1 ]
+        then
+                _ENTER
+        else
+                #Checking if the entered value is Decimal number
+                if [[ $INPUT_NUMBER =~ ^[0-9]{1,3}$ ]] && [ $INPUT_NUMBER -lt 256 ]
+                then
+			TYPE="DEC"
+                        NEW_DEC=$(($INPUT_NUMBER))
+                else
+                        whiptail --title "!ERROR!" --msgbox "The Entered Value Must Decimal Within Limit" 10 50
+                        _DEC
+                fi
+        fi
+}
+
+_OCT (){
+        INPUT_NUMBER=$(whiptail --title "Octal" --inputbox "Enter OCT number: (limit is 377)" 25 50 ""\
+                --cancel-button "back" --ok-button "Enter" 3>&1 1>&2 2>&3)
+        EX=$?
+        if [ $EX = 1 ]
+        then
+                _ENTER
+        else
+                #Checking if the entered value is Octal number
+                if [[ $INPUT_NUMBER =~ ^[0-7]{1,3}$ ]] && [ $INPUT_NUMBER -lt 378 ]
+                then
+			TYPE="OCT"
+                        NEW_DEC=$((8#$INPUT_NUMBER))
+                else
+                        whiptail --title "!ERROR!" --msgbox "The Entered Value Must Be Octal Within Limit" 10 50
+                        _OCT
+                fi
+        fi
+}
+
+_BIN (){
+        INPUT_NUMBER=$(whiptail --title "Binary" --inputbox "Enter BIN number: (limit is 8 bits)" 25 50 ""\
+                --cancel-button "back" --ok-button "Enter" 3>&1 1>&2 2>&3)
+        EX=$?
+        if [ $EX = 1 ]
+        then
+                _ENTER 
+        else
+                #Checking if the entered value is Binary number
+                if [[ $INPUT_NUMBER =~ ^[0-1]{1,8}$ ]]
+                then
+			TYPE="BIN"
+                        NEW_DEC=$((2#$INPUT_NUMBER))
+                else
+                        whiptail --title "!ERROR!" --msgbox "The Entered Value Must Be Binary Within Limit" 10 50
+                        _BIN
+                fi
+        fi
+}
+
+########################################
+###### Bitwise Operations Section ######
+########################################
+_AND () {
+	_ENTER "0" 
+
+	VALUE=$((CURRENT_DEC&NEW_DEC))
+
+	#Display Programmer first Line as the last entered value
+	if [ $TYPE = "HEX" ]
+	then
+	_PROGRAMMER "$VALUE" "${D2H[$CURRENT_DEC]} AND ${D2H[$NEW_DEC]}"
+	elif [ $TYPE = "DEC" ]
+	then
+	_PROGRAMMER "$VALUE" "$CURRENT_DEC AND $NEW_DEC"
+	elif [ $TYPE = "OCT" ]
+	then
+	_PROGRAMMER "$VALUE" "${D2O[$CURRENT_DEC]} AND ${D2O[$NEW_DEC]}"
+	else
+	_PROGRAMMER "$VALUE" "${D2B[$CURRENT_DEC]} AND ${D2B[$NEW_DEC]}"
+	fi
+
+}
+
+_OR () {
+	_ENTER "0" 
+
+	VALUE=$((CURRENT_DEC|NEW_DEC))
+
+	#Display Programmer first Line as the last entered value
+	if [ $TYPE = "HEX" ]
+	then
+	_PROGRAMMER "$VALUE" "${D2H[$CURRENT_DEC]} OR ${D2H[$NEW_DEC]}"
+	elif [ $TYPE = "DEC" ]
+	then
+	_PROGRAMMER "$VALUE" "$CURRENT_DEC OR $NEW_DEC"
+	elif [ $TYPE = "OCT" ]
+	then
+	_PROGRAMMER "$VALUE" "${D2O[$CURRENT_DEC]} OR ${D2O[$NEW_DEC]}"
+	else
+	_PROGRAMMER "$VALUE" "${D2B[$CURRENT_DEC]} OR ${D2B[$NEW_DEC]}"
+	fi
+
+}
+
+_NOT () {
+	VALUE=$((~CURRENT_DEC))
+
+	#Display Programmer first Line as the last entered value
+	if [ $TYPE = "HEX" ]
+	then
+	_PROGRAMMER "$VALUE" "NOT ${D2H[$CURRENT_DEC]}"
+	elif [ $TYPE = "DEC" ]
+	then
+	_PROGRAMMER "$VALUE" "NOT $CURRENT_DEC"
+	elif [ $TYPE = "OCT" ]
+	then
+	_PROGRAMMER "$VALUE" "NOT ${D2O[$CURRENT_DEC]}"
+	else
+	_PROGRAMMER "$VALUE" "NOT ${D2B[$CURRENT_DEC]}"
+	fi
+
+}
+
+_NAND () {
+	_ENTER "0" 
+
+	VALUE=$((~(CURRENT_DEC&NEW_DEC)))
+
+	#Display Programmer first Line as the last entered value
+	if [ $TYPE = "HEX" ]
+	then
+	_PROGRAMMER "$VALUE" "${D2H[$CURRENT_DEC]} NAND ${D2H[$NEW_DEC]}"
+	elif [ $TYPE = "DEC" ]
+	then
+	_PROGRAMMER "$VALUE" "$CURRENT_DEC NAND $NEW_DEC"
+	elif [ $TYPE = "OCT" ]
+	then
+	_PROGRAMMER "$VALUE" "${D2O[$CURRENT_DEC]} NAND ${D2O[$NEW_DEC]}"
+	else
+	_PROGRAMMER "$VALUE" "${D2B[$CURRENT_DEC]} NAND ${D2B[$NEW_DEC]}"
+	fi
+
+}
+
+_NOR () {
+	_ENTER "0" 
+
+	VALUE=$((~(CURRENT_DEC|NEW_DEC)))
+
+	#Display Programmer first Line as the last entered value
+	if [ $TYPE = "HEX" ]
+	then
+	_PROGRAMMER "$VALUE" "${D2H[$CURRENT_DEC]} NOR ${D2H[$NEW_DEC]}"
+	elif [ $TYPE = "DEC" ]
+	then
+	_PROGRAMMER "$VALUE" "$CURRENT_DEC NOR $NEW_DEC"
+	elif [ $TYPE = "OCT" ]
+	then
+	_PROGRAMMER "$VALUE" "${D2O[$CURRENT_DEC]} NOR ${D2O[$NEW_DEC]}"
+	else
+	_PROGRAMMER "$VALUE" "${D2B[$CURRENT_DEC]} NOR ${D2B[$NEW_DEC]}"
+	fi
+
+}
+
+_XOR () {
+	_ENTER "0" 
+
+	VALUE=$((CURRENT_DEC^NEW_DEC))
+
+	#Display Programmer first Line as the last entered value
+	if [ $TYPE = "HEX" ]
+	then
+	_PROGRAMMER "$VALUE" "${D2H[$CURRENT_DEC]} XOR ${D2H[$NEW_DEC]}"
+	elif [ $TYPE = "DEC" ]
+	then
+	_PROGRAMMER "$VALUE" "$CURRENT_DEC XOR $NEW_DEC"
+	elif [ $TYPE = "OCT" ]
+	then
+	_PROGRAMMER "$VALUE" "${D2O[$CURRENT_DEC]} XOR ${D2O[$NEW_DEC]}"
+	else
+	_PROGRAMMER "$VALUE" "${D2B[$CURRENT_DEC]} XOR ${D2B[$NEW_DEC]}"
+	fi
+
+}
+
+_SHIFT_RIGHT () {
+	_ENTER "0" 
+
+	VALUE=$(($CURRENT_DEC>>$NEW_DEC))
+
+	#Display Programmer first Line as the last entered value
+	if [ $TYPE = "HEX" ]
+	then
+	_PROGRAMMER "$VALUE" "${D2H[$CURRENT_DEC]} Rsh ${D2H[$NEW_DEC]}"
+	elif [ $TYPE = "DEC" ]
+	then
+	_PROGRAMMER "$VALUE" "$CURRENT_DEC Rsh $NEW_DEC"
+	elif [ $TYPE = "OCT" ]
+	then
+	_PROGRAMMER "$VALUE" "${D2O[$CURRENT_DEC]} Rsh ${D2O[$NEW_DEC]}"
+	else
+	_PROGRAMMER "$VALUE" "${D2B[$CURRENT_DEC]} Rs ${D2B[$NEW_DEC]}"
+	fi
+
+}
+
+_SHIFT_LEFT () {
+	_ENTER "0" 
+
+	VALUE=$(($CURRENT_DEC<<$NEW_DEC))
+
+	#Display Programmer first Line as the last entered value
+	if [ $TYPE = "HEX" ]
+	then
+	_PROGRAMMER "$VALUE" "${D2H[$CURRENT_DEC]} Lsh ${D2H[$NEW_DEC]}"
+	elif [ $TYPE = "DEC" ]
+	then
+	_PROGRAMMER "$VALUE" "$CURRENT_DEC Lsh $NEW_DEC"
+	elif [ $TYPE = "OCT" ]
+	then
+	_PROGRAMMER "$VALUE" "${D2O[$CURRENT_DEC]} Lsh ${D2O[$NEW_DEC]}"
+	else
+	_PROGRAMMER "$VALUE" "${D2B[$CURRENT_DEC]} Lsh ${D2B[$NEW_DEC]}"
+	fi
+
+}
+
+
+###### Calling the Main Function to start the program ######
+_MAIN
+############################################################
+
